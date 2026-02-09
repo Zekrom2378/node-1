@@ -1,6 +1,6 @@
 from dataclasses import dataclass
-from .events import State
-from .config import SHORT_MAX, MED_MAX
+from events import State
+from config import SHORT_MAX, MED_MAX
 
 
 @dataclass

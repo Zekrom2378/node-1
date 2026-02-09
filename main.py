@@ -1,12 +1,13 @@
 import time
-from .events import Event, EventType, State
-from .fsm import StateMachine
-from .planner import GesturePlanner
-from .mcu import MCUInterface
-from .cloud import CloudClient
-from .log import setup_logger
+from events import Event, EventType, State
+from fsm import StateMachine
+from planner import GesturePlanner
+from mcu import MCUInterface
+from cloud import CloudClient
+from log import setup_logger
 
 logger = setup_logger()
+
 
 def run_main() -> None:
     fsm = StateMachine()
@@ -59,5 +60,7 @@ def run_main() -> None:
 
             time.sleep(0.01)
 
-        if __name__ == "__main__":
-            run_main()
+
+if __name__ == '__main__':
+    print("NODE-1 Main Starting")
+    run_main()

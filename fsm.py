@@ -1,8 +1,8 @@
 import time
 from dataclasses import dataclass
-from .events import State, Event, EventType
-from .config import ATTENTIVE_TIMEOUT_S, LISTENING_TIMEOUT_S, THINKING_TIMEOUT_S
-from .log import setup_logger
+from events import State, Event, EventType
+from config import ATTENTIVE_TIMEOUT_S, LISTENING_TIMEOUT_S, THINKING_TIMEOUT_S
+from log import setup_logger
 
 logger = setup_logger()
 

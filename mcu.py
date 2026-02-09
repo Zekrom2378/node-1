@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from typing import Optional
-from .log import setup_logger
+from log import setup_logger
 
 logger = setup_logger()
 
