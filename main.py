@@ -1,12 +1,24 @@
 import time
+import threading
 from events import Event, EventType, State
 from fsm import StateMachine
 from planner import GesturePlanner
 from mcu import MCUInterface
 from cloud import CloudClient
 from log import setup_logger
+from listener import Listener
+from voice import VoiceEngine as voice_engine
 
 logger = setup_logger()
+
+
+def voice_input_thread(fsm_ref):
+    listener = Listener()
+    while True:
+        # This will block, but only in this sub-thread
+        event = listener.listen(fsm_ref.state)
+        if event:
+            fsm_ref.handle(event)
 
 
 def run_main() -> None:
@@ -14,53 +26,46 @@ def run_main() -> None:
     planner = GesturePlanner()
     mcu = MCUInterface()
     cloud = CloudClient()
+    voice = voice_engine(gender='m')
+    # listener = Listener()
 
     # Enter initial state
     mcu.set_state(fsm.state.name)
     mcu.play_gesture(planner.on_enter_state(fsm.state))
+    threading.Thread(target=voice_input_thread, args=(fsm,), daemon=True).start()
 
     logger.info("Console controls: [s]=heard speech, [w]=wake word, [p]=prompt, [r]=reset, [q]=quit")
 
     while True:
-        # Network Timeout Handling
+        # 1. Check for Timeouts
         if fsm.timed_out():
             fsm.handle(Event(EventType.TIMEOUT))
-            mcu.set_state(fsm.state.name)
-            mcu.play_gesture(planner.on_enter_state(fsm.state))
 
-        cmd = input("> ").strip().lower()
-        if cmd == 'q':
-            break
+        # 3. Logic for THINKING
+        if fsm.state == State.THINKING:
+            # Senior EE Tip: Use this delay to trigger the 'thinking' servos/LEDs
+            mcu.play_gesture("thinking_sway")
 
-        if cmd == 's':
-            fsm.handle(Event(EventType.HEARD_SPEECH))
-        elif cmd == 'w':
-            fsm.handle(Event(EventType.WAKE_WORD))
-        elif cmd == 'p':
-            text = input("prompt text: ").strip()
-            fsm.handle(Event(EventType.PROMPT_TEXT, {"text": text}))
-            # If a prompt is sent to the LLM, it will enter THINKING; call cloud stub and return the response
-            print(text)
-            if fsm.state == State.THINKING:
-                result = cloud.run(fsm.ctx.prompt_text)
-                print(result.response_text)
-                fsm.handle(Event(EventType.LLM_RESULT, {"text": result.response_text}))
-                plan = planner.plan_response(result.response_text)
-                fsm.enter(plan.state_after)
-                mcu.play_gesture(plan.gesture_id)
-                logger.info(f"RESPONSE: {result.response_text}")
-                # auto reset to idle after response for now
-                fsm.handle(Event(EventType.RESET))
-            elif cmd == "r":
-                fsm.handle(Event(EventType.RESET))
-            else:
-                logger.info("Unknown command")
+            result = cloud.run(fsm.ctx.prompt_text)
 
-                # send state/gesture on any transition
-            mcu.set_state(fsm.state.name)
-            mcu.play_gesture(planner.on_enter_state(fsm.state))
+            # Artificial delay for 'liveliness' as requested
+            time.sleep(1.5)
 
-            time.sleep(0.01)
+            fsm.handle(Event(EventType.LLM_RESULT, {"text": result.response_text}))
+
+            # 4. Logic for RESPONDING
+            plan = planner.plan_response(result.response_text)
+            fsm.enter(plan.state_after)
+            mcu.play_gesture(plan.gesture_id)
+
+            # Speak the result
+            voice.speak(result.response_text)
+
+            # Reset back to IDLE
+            fsm.handle(Event(EventType.RESET))
+        mcu.set_state(fsm.state.name)
+
+        time.sleep(0.01)
 
 
 if __name__ == '__main__':

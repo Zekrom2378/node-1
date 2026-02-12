@@ -22,7 +22,7 @@ class StateMachine:
     def enter(self, new_state: State) -> None:
         self.state = new_state
         self.ctx.last_state_ts = time.monotonic()
-        logger.info(f"STATE -> {self.state.name}")
+        logger.info(f"\n[!] STATE CHANGE: {self.state.name}")
 
     def timed_out(self) -> bool:
         dt = time.monotonic() - self.ctx.last_state_ts
@@ -40,9 +40,21 @@ class StateMachine:
             self.enter(State.ERROR)
             return
 
+        # Extract text if available for logic checks
+        input_text = (ev.data or {}).get("text", "").lower()
+        wake_word = "node"  # Define your wake word here
+
         if s == State.IDLE:
             if ev.type == EventType.HEARD_SPEECH:
-                self.enter(State.ATTENTIVE)
+                if wake_word in input_text:
+                    self.ctx.prompt_text = input_text.replace(wake_word, "").strip()
+                    # Jump transition: If prompt followed the wake word immediately
+                    if self.ctx.prompt_text:
+                        self.enter(State.THINKING)
+                    else:
+                        self.enter(State.LISTENING)
+                else:
+                    self.enter(State.ATTENTIVE)
 
         elif s == State.ATTENTIVE:
             if ev.type == EventType.WAKE_WORD:
@@ -52,14 +64,14 @@ class StateMachine:
 
         elif s == State.LISTENING:
             if ev.type == EventType.PROMPT_TEXT and ev.data:
-                self.ctx.prompt_text = ev.data.get("text", "")
+                self.ctx.prompt_text = input_text
                 self.enter(State.THINKING)
             elif ev.type == EventType.TIMEOUT:
                 self.enter(State.IDLE)
 
         elif s == State.THINKING:
             if ev.type == EventType.LLM_RESULT and ev.data:
-                self.ctx.response_text = ev.data.get("text", "")
+                pass
                 # response state chosen externally by planner
             elif ev.type == EventType.TIMEOUT:
                 self.enter(State.ERROR)

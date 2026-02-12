@@ -1,7 +1,8 @@
 import os
 from dataclasses import dataclass
-
+from dotenv import load_dotenv
 from google import genai
+load_dotenv()
 
 
 @dataclass

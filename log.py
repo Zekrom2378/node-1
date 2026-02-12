@@ -1,3 +1,4 @@
+# Updated log.py
 import json
 import logging
 import sys
@@ -18,8 +19,16 @@ class JsonFormatter(logging.Formatter):
 def setup_logger() -> logging.Logger:
     logger = logging.getLogger("node1")
     logger.setLevel(logging.INFO)
-    handler = logging.StreamHandler(sys.stdout)
-    handler.setFormatter(JsonFormatter())
     logger.handlers.clear()
-    logger.addHandler(handler)
+
+    # 1. File Handler - Logs EVERYTHING
+    file_handler = logging.FileHandler("robot_debug.log")
+    file_handler.setFormatter(JsonFormatter())
+    logger.addHandler(file_handler)
+
+    # 2. Console Handler - Still logs, but we will be picky about calling it
+    console_handler = logging.StreamHandler(sys.stdout)
+    console_handler.setFormatter(logging.Formatter('%(message)s')) # Cleaner console view
+    logger.addHandler(console_handler)
+
     return logger
