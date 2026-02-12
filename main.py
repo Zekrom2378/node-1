@@ -40,8 +40,10 @@ def run_main() -> None:
             text = input("prompt text: ").strip()
             fsm.handle(Event(EventType.PROMPT_TEXT, {"text": text}))
             # If a prompt is sent to the LLM, it will enter THINKING; call cloud stub and return the response
+            print(text)
             if fsm.state == State.THINKING:
                 result = cloud.run(fsm.ctx.prompt_text)
+                print(result.response_text)
                 fsm.handle(Event(EventType.LLM_RESULT, {"text": result.response_text}))
                 plan = planner.plan_response(result.response_text)
                 fsm.enter(plan.state_after)
