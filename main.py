@@ -4,7 +4,7 @@ from events import Event, EventType, State
 from fsm import StateMachine
 from planner import GesturePlanner
 from mcu import MCUInterface
-from cloud import CloudClient
+from cloud import CloudClient, ListModels
 from log import setup_logger
 from listener import Listener
 from voice import VoiceEngine as voice_engine
@@ -65,9 +65,10 @@ def run_main() -> None:
             fsm.handle(Event(EventType.RESET))
         mcu.set_state(fsm.state.name)
 
-        time.sleep(0.01)
+        time.sleep(0.02)
 
 
 if __name__ == '__main__':
     print("NODE-1 Main Starting")
+    # ListModels()
     run_main()

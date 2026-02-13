@@ -4,17 +4,15 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="0754c042-4fda-4916-970a-ba717561ba08" name="Changes" comment="Updated to Gemini Pro API because it is free">
+    <list default="true" id="0754c042-4fda-4916-970a-ba717561ba08" name="Changes" comment="Updated to at least hear audio now">
       <change afterPath="$PROJECT_DIR$/.env" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/listener.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/voice.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/cloud.py" beforeDir="false" afterPath="$PROJECT_DIR$/cloud.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/config.py" beforeDir="false" afterPath="$PROJECT_DIR$/config.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/fsm.py" beforeDir="false" afterPath="$PROJECT_DIR$/fsm.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/log.py" beforeDir="false" afterPath="$PROJECT_DIR$/log.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/listener.py" beforeDir="false" afterPath="$PROJECT_DIR$/listener.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/mcu.py" beforeDir="false" afterPath="$PROJECT_DIR$/mcu.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/voice.py" beforeDir="false" afterPath="$PROJECT_DIR$/voice.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -46,15 +44,15 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "Python.main.executor": "Run",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "master",
-    "last_opened_file_path": "C:/Users/tanne/OneDrive/Desktop/School2024/Python Stuff/DesktopAIInteractionNode",
-    "settings.editor.selected.configurable": "preferences.fileTypes"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Python.main.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/tanne/OneDrive/Desktop/School2024/Python Stuff/DesktopAIInteractionNode&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.fileTypes&quot;
   }
-}]]></component>
+}</component>
   <component name="RunManager">
     <configuration name="main" type="PythonConfigurationType" factoryName="Python" nameIsGenerated="true">
       <module name="DesktopAIInteractionNode" />
@@ -136,7 +134,15 @@
       <option name="project" value="LOCAL" />
       <updated>1770881076451</updated>
     </task>
-    <option name="localTasksCounter" value="6" />
+    <task id="LOCAL-00006" summary="Updated to at least hear audio now">
+      <option name="closed" value="true" />
+      <created>1770884688704</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1770884688704</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -166,15 +172,21 @@
     <MESSAGE value="First Loose Skeleton for Node-1" />
     <MESSAGE value="Filled in main code" />
     <MESSAGE value="Updated to Gemini Pro API because it is free" />
-    <option name="LAST_COMMIT_MESSAGE" value="Updated to Gemini Pro API because it is free" />
+    <MESSAGE value="Updated to at least hear audio now" />
+    <option name="LAST_COMMIT_MESSAGE" value="Updated to at least hear audio now" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
       <breakpoints>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/cloud.py</url>
-          <line>19</line>
+          <line>25</line>
           <option name="timeStamp" value="1" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/fsm.py</url>
+          <line>79</line>
+          <option name="timeStamp" value="5" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

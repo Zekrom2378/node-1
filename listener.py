@@ -37,20 +37,20 @@ class Listener:
             except Exception:
                 return None
 
-    def process_audio(text: str, current_state: State):
-        text = text.lower()
-
-        if current_state == State.IDLE:
-            # Any speech moves it to Attentive
-            return Event(EventType.HEARD_SPEECH)
-
-        elif current_state == State.ATTENTIVE:
-            if "node" in text:  # Replace with your wake word
-                return Event(EventType.WAKE_WORD)
-            return None  # Stay in Attentive or wait for timeout
-
-        elif current_state == State.LISTENING:
-            # In this state, the speech IS the prompt
-            return Event(EventType.PROMPT_TEXT, {"text": text})
-
-        return None
+    # def process_audio(text: str, current_state: State):
+    #     text = text.lower()
+    #
+    #     if current_state == State.IDLE:
+    #         # Any speech moves it to Attentive
+    #         return Event(EventType.HEARD_SPEECH)
+    #
+    #     elif current_state == State.ATTENTIVE:
+    #         if "node" in text:  # Replace with your wake word
+    #             return Event(EventType.WAKE_WORD)
+    #         return None  # Stay in Attentive or wait for timeout
+    #
+    #     elif current_state == State.LISTENING:
+    #         # In this state, the speech IS the prompt
+    #         return Event(EventType.PROMPT_TEXT, {"text": text})
+    #
+    #     return None

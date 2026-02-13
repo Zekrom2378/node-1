@@ -5,6 +5,12 @@ from google import genai
 load_dotenv()
 
 
+def ListModels():
+    client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
+    for model in client.models.list():
+        print(model.name)
+
+
 @dataclass
 class LlmResult:
     response_text: str
@@ -17,13 +23,12 @@ class CloudClient:
       - CloudClient.run(prompt_text: str) -> LlmResult
     """
 
-    def __init__(self, model: str = "gemini-1.5-flash") -> None:
+    def __init__(self, model: str = "gemini-2.5-flash") -> None:
         # The google-genai SDK will automatically read GEMINI_API_KEY or GOOGLE_API_KEY.
-        # We'll still sanity-check so failures are obvious.
+        # If gemini-1.5-flash fails, try "gemini-2.0-flash-exp" or "gemini-1.5-flash-latest"
         if not (os.getenv("GEMINI_API_KEY") or os.getenv("GOOGLE_API_KEY")):
             raise RuntimeError(
-                "Gemini API key not set. Put GEMINI_API_KEY (recommended) in your .env "
-                "and call load_dotenv() in main.py."
+                "Gemini API key not set. Put GEMINI_API_KEY in your .env"
             )
 
         self.client = genai.Client()  # key taken from env by default :contentReference[oaicite:4]{index=4}
@@ -31,8 +36,10 @@ class CloudClient:
 
         # System instruction to enforce NODE-1's concise “2 sentences max + offer details” behavior.
         self.system_instruction = (
-            "You are a concise assistant. Answer in 1–2 sentences. "
-            "If and only if more explanation is needed, give a short summary and ask if the user wants details."
+            """You are a concise robotic assistant. Answer in 1–2 sentences. If more explanation is needed, provide a 
+            summary and ask if the user wants details. Strictly avoid using Markdown formatting like asterisks for bold 
+            or italics. Write only in plain, spoken English. Use standard punctuation like periods and commas 
+            for natural pauses."""
         )
 
     def run(self, prompt_text: str) -> LlmResult:
@@ -56,5 +63,6 @@ class CloudClient:
         text = (getattr(resp, "text", "") or "").strip()
         if not text:
             text = "No response text received."
-
+        with open("latest_response.txt", "w", encoding="utf-8") as file:
+            file.write(text)
         return LlmResult(response_text=text)

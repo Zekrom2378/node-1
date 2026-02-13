@@ -41,19 +41,27 @@ class StateMachine:
             return
 
         # Extract text if available for logic checks
+        wake_words = ["aegis wake up", "aegis get this", "hey aegis", "yo aegis", "aegis"]
+        wake_words.sort(key=len, reverse=True)
         input_text = (ev.data or {}).get("text", "").lower()
-        wake_word = "node"  # Define your wake word here
 
         if s == State.IDLE:
-            if ev.type == EventType.HEARD_SPEECH:
-                if wake_word in input_text:
-                    self.ctx.prompt_text = input_text.replace(wake_word, "").strip()
-                    # Jump transition: If prompt followed the wake word immediately
-                    if self.ctx.prompt_text:
-                        self.enter(State.THINKING)
-                    else:
-                        self.enter(State.LISTENING)
+            # Check for BOTH speech and wake word events
+            if ev.type in (EventType.HEARD_SPEECH, EventType.WAKE_WORD):
+                if s == State.IDLE:
+                    # Check if ANY wake word is in the input
+                    matched_wake_word = next((w for w in wake_words if w in input_text), None)
+
+                    if matched_wake_word:
+                        # Strip the specific matched phrase to get the prompt
+                        self.ctx.prompt_text = input_text.replace(matched_wake_word, "").strip()
+
+                        if self.ctx.prompt_text:
+                            self.enter(State.THINKING)
+                        else:
+                            self.enter(State.LISTENING)
                 else:
+                    # Generic speech moves to Attentive
                     self.enter(State.ATTENTIVE)
 
         elif s == State.ATTENTIVE:
@@ -78,7 +86,7 @@ class StateMachine:
 
         elif s in (State.RESPOND_SHORT, State.RESPOND_MED, State.RESPOND_LONG):
             if ev.type == EventType.RESET:
-                self.enter(State.IDLE)
+                self.enter(State.LISTENING)
 
         elif s == State.ERROR:
             if ev.type == EventType.RESET:
